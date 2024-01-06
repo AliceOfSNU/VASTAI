@@ -1,5 +1,4 @@
-import torch
-
+# Copyright Hanjun Kim @AliceOfSNU
 ## model
 from transformers import get_cosine_schedule_with_warmup
 from transformers import Blip2ForConditionalGeneration
@@ -80,8 +79,13 @@ def main():
         "num_epochs" : 2,
         "batch_size" : 128,
         "gradient_accumulation_steps" : 3, #3,
-        "train_dataset": "../data/train",
-        "val_dataset": "../data/val"
+        
+        # datasets
+        # make sure you have properly downloaded the data
+        # cd into appropriate folder and run
+        # gdown 1eSk4RteggZqQhuWEyo5BazCnCBhRnvE5
+        "train_dataset": "../data/train.csv", #change this
+        "val_dataset": "../data/val.csv" #change this
     }
     
     #load model
@@ -96,9 +100,10 @@ def main():
     )
     
     # dataset and loaders
+    print("loading data..")
     df = {
-        "train": pd.read_csv('train.csv'),
-        "val": pd.read_csv('test.csv')
+        "train": pd.read_csv(args["train_dataset"]),
+        "val": pd.read_csv(args["val_dataset"])
     }
     transform = transforms.Compose([
         transforms.Resize(args['image_resize']), 
@@ -107,6 +112,8 @@ def main():
     datasets = {
         k : QualDataset(df[k], preprocessor, transform) for k in ["train", "val"]
     }
+    
+    # create indexs
     all_comments = ' '.join(datasets['comments']).split()
     vocab = set(all_comments)
     vocab = ['<PAD>', '<SOS>', '<EOS>'] + list(vocab)

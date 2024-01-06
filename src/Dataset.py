@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 import pandas as pd
-from torch.utils.data import Dataset
+import torchvision.transforms as transforms
+import torchvision.models as models
+from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 
 class QualDataset(Dataset):
